@@ -1,0 +1,57 @@
+--[[
+    Blox Fruits Farming Script
+    Versão: 1.3
+    Criado por: suysbs/joao
+    Descrição: Este script coleta frutas, ataca inimigos e farm baús para maximizar o nível do jogador no jogo Blox Fruits.
+    Licença: Open Source - Sinta-se à vontade para usar e modificar.
+--]]
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+-- Função para coletar frutas
+local function coletarFrutas()
+    for _, fruta in ipairs(workspace:GetChildren()) do
+        if fruta:IsA("Fruit") and (humanoidRootPart.Position - fruta.Position).magnitude <= 50 then -- Ajuste a distância conforme necessário
+            if fruta:FindFirstChild("ClickDetector") then
+                fireclickdetector(fruta.ClickDetector) -- Coleta a fruta usando o ClickDetector
+                print("Fruta coletada: " .. fruta.Name)
+                wait(1) -- Espera 1 segundo antes de tentar coletar outra fruta
+            end
+        end
+    end
+end
+
+-- Função para atacar inimigos
+local function atacarInimigos()
+    for _, inimigo in ipairs(workspace:GetChildren()) do
+        if inimigo:IsA("Model") and inimigo:FindFirstChild("Humanoid") and (humanoidRootPart.Position - inimigo.PrimaryPart.Position).magnitude <= 50 then -- Ajuste a distância conforme necessário
+            local inimigoHumanoid = inimigo:FindFirstChild("Humanoid")
+            if inimigoHumanoid.Health > 0 then
+                inimigoHumanoid:TakeDamage(50) -- Altera o valor para a quantidade de dano desejada
+                print("Atacando: " .. inimigo.Name)
+                wait(1) -- Espera 1 segundo entre ataques
+            end
+        end
+    end
+end
+
+-- Função para coletar baús
+local function coletarBaus()
+    for _, bau in ipairs(workspace:GetChildren()) do
+        if bau:IsA("Model") and bau:FindFirstChild("ClickDetector") and (humanoidRootPart.Position - bau.PrimaryPart.Position).magnitude <= 50 then -- Ajuste a distância conforme necessário
+            fireclickdetector(bau.ClickDetector) -- Coleta o baú usando o ClickDetector
+            print("Baú coletado: " .. bau.Name)
+            wait(1) -- Espera 1 segundo antes de tentar coletar outro baú
+        end
+    end
+end
+
+-- Loop principal
+while true do
+    coletarFrutas()   -- Chama a função para coletar frutas
+    atacarInimigos()  -- Chama a função para atacar inimigos
+    coletarBaus()     -- Chama a função para coletar baús
+    wait(5)           -- Aguarda 5 segundos antes de repetir as ações
+end
